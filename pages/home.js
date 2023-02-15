@@ -1,42 +1,67 @@
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { api } from '../api/axios';
-import { idDetail } from '../redux/slice';
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useDispatch } from "react-redux";
+import { api } from "../api/axios";
+import { idDetail } from "../redux/slice";
 
-export default function Home({navigation}) {
-const [movies, setMovies] = useState()
-const dispatch = useDispatch();
+export default function Home({ navigation }) {
+  const [movies, setMovies] = useState("");
+  const dispatch = useDispatch();
 
-    useEffect(()=>{
-        api.get(`https://api.themoviedb.org/3/movie/popular?api_key=ac57c76aa7b66833535f4b4aabe014f6&language=pt-BR&page=1`)
-        .then((resposta)=>{
-            setMovies(resposta.data.results)
-            console.log(resposta.data.results)
-        }).catch((erro)=>{
-            console.log(erro)
-        })
-    },[])
+  useEffect(() => {
+    api
+      .get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=ac57c76aa7b66833535f4b4aabe014f6&language=pt-BR&page=1`
+      )
+      .then((resposta) => {
+        setMovies(resposta.data.results);
+        console.log(resposta.data.results);
+      })
+      .catch((erro) => {
+        console.log(erro);
+      });
+  }, []);
 
-    const GoToDetail = async(id) =>{
-      await dispatch(idDetail(id))
-      navigation.navigate("Detail")
-    }
+  const GoToDetail = async (id) => {
+    await dispatch(idDetail(id));
+    navigation.navigate("Detail");
+  };
 
   return (
-    <View style={styles.container}> 
-        {!movies ? null :
-            <FlatList data={movies} keyExtractor={item => item.id} renderItem={({item})=>(
-              
-                <TouchableOpacity style={styles.grid} key={item.id} onPress={()=>GoToDetail(item.id)}>
-                  <View style={styles.subContainer}>
-                    <Image style={styles.image} source={{uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}`}}/>
-                    <Text numberOfLines={1} style={styles.title}>{item.title}</Text>
-                  </View>
-                </TouchableOpacity>
-            )}/>
-        }
+    <View style={styles.container}>
+      {!movies ? null : (
+        <FlatList
+          data={movies}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.grid}
+              key={item.id}
+              onPress={() => GoToDetail(item.id)}
+            >
+              <View style={styles.subContainer}>
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}`,
+                  }}
+                />
+                <Text numberOfLines={1} style={styles.title}>
+                  {item.title}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
       <StatusBar style="auto" />
     </View>
   );
@@ -44,8 +69,8 @@ const dispatch = useDispatch();
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    backgroundColor: '#000',
+    flex: 1,
+    backgroundColor: "#000",
     color: "#fff",
     paddingVertical: "10%",
   },
@@ -77,6 +102,6 @@ const styles = StyleSheet.create({
   title: {
     color: "#fff",
     fontSize: 18,
-    width: '70%'
-  }
+    width: "70%",
+  },
 });
